@@ -1,6 +1,6 @@
 // Uncomment this block to pass the first stage
 use std::{
-    io::Write,
+    io::{Read, Write},
     net::{TcpListener, TcpStream},
 };
 
@@ -25,9 +25,15 @@ fn main() {
 }
 fn handle_client(mut stream: TcpStream) {
     let mut buf = [0; 7];
+    let mut buf2 = [0; 20];
     buf.copy_from_slice(b"+PONG\r\n");
-
-    stream
-        .write_all(&buf[0..7])
-        .expect("Failed to write to client");
+    loop {
+        let read_bytes = stream.read(&mut buf2).expect("Failed to read");
+        if (read_bytes == 0) {
+            return;
+        }
+        stream
+            .write_all(&buf[0..7])
+            .expect("Failed to write to client");
+    }
 }
