@@ -2,6 +2,7 @@
 use std::{
     io::{Read, Write},
     net::{TcpListener, TcpStream},
+    thread,
 };
 
 fn main() {
@@ -11,11 +12,11 @@ fn main() {
     // Uncomment this block to pass the first stage
     //
     let listener = TcpListener::bind("127.0.0.1:6379").unwrap();
-
     for stream in listener.incoming() {
         match stream {
             Ok(_stream) => {
-                handle_client(_stream);
+                thread::spawn(|| handle_client(_stream));
+                // handle_client(_stream);
             }
             Err(e) => {
                 println!("error: {}", e);
